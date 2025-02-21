@@ -1,0 +1,40 @@
+version: "3"
+services:
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+
+    container_name: "db"
+    ports:
+      - "5432:5432"
+    networks:
+      - custom
+
+  redis:
+    image: redis:5
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - custom
+
+  notes:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+
+    container_name: notes
+    ports:
+      - "8000:8000"
+    networks:
+      - custom
+    depends_on:
+      - redis
+      - db
+
+networks:
+  custom:
+    driver: bridge
